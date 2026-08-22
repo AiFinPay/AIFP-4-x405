@@ -1,10 +1,8 @@
 <p align="center">
-  <a href="https://aifinpay.io">
-    <img src="https://img.shields.io/badge/AiFinPay-AIFP--4-0B1020?style=for-the-badge&labelColor=0B1020&color=2F5FD6" alt="AiFinPay AIFP-4" />
-  </a>
+  <img src="assets/brand/aifp-4-hero-light.jpg" alt="AiFinPay AIFP-4 Banking and SWIFT Protocol" width="900" />
 </p>
 
-<h1 align="center">AIFP-4 Autonomous Treasury Protocol</h1>
+<h1 align="center">AiFinPay AIFP-4 Banking &amp; SWIFT Protocol</h1>
 
 <p align="center">
   <strong>Global financial messaging, policy enforcement, and settlement orchestration for AI agents and autonomous organizations.</strong>
