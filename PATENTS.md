@@ -1,35 +1,45 @@
-# AIFP-4 Patent Notice
+# AIFP-4 / x405 Patent Notice
 
-Copyright 2026 AiFinPay. All rights reserved.
+Copyright (c) 2026 AiFinPay. All rights reserved.
 
-Publication of AIFP-4 source code, specifications, diagrams, schemas, examples, or test vectors does not dedicate any invention to the public domain and does not waive any patent rights.
+Publication of x405 / AIFP-4 source code, specifications, diagrams, schemas, examples, test vectors or implementation concepts does not dedicate any invention to the public domain and does not waive patent rights that may exist or later be obtained.
 
-## Protocol implementation
+## 1. No implied patent grant
 
-The public specification license permits use of the copyrighted specification under its stated terms. It does not independently grant patent rights unless an applicable file-specific license expressly provides a patent grant.
+The public Specification license permits implementation of the copyrighted Specification under its stated terms. It does not independently grant a patent license except where AiFinPay expressly grants one in writing.
 
-## Reference code
+Implementers remain responsible for assessing third-party patents and other rights that may apply to their implementation.
 
-Patent rights associated with reference source code are governed by the license applicable to that code. Commercial production use should be covered by a separate written commercial and patent license from AiFinPay.
+## 2. Reference Code
 
-## Defensive termination
+Patent rights associated with AiFinPay Reference Code are governed by the applicable code license and any separate commercial agreement.
 
-Any patent license granted by AiFinPay for AIFP-4 may terminate for a party that initiates or maintains a patent claim alleging that AIFP-4, AiFinPay, an AIFP implementation, or an authorized network partner infringes a patent, subject to the terms of the applicable written license.
+Commercial production users of substantial Reference Code may be required to obtain a separate written commercial and patent license where applicable.
 
-## Patentable subject matter
+## 3. Defensive termination
 
-Potentially patentable areas may include, without limitation:
+Any patent license granted by AiFinPay may provide for defensive termination if the licensee initiates or maintains a patent claim alleging that x405/AIFP-4, AiFinPay, an authorized implementation or an authorized network/provider integration infringes a patent, subject to the exact written license terms and applicable law.
 
-- organization-bound agent financial authority;
-- policy-controlled autonomous treasury execution;
-- jurisdiction-aware partner routing;
-- cryptographic binding of intent, policy, approvals, route, execution, and reconciliation;
-- cross-protocol interaction among AIFP-1, AIFP-2, AIFP-3, and AIFP-4;
-- autonomous intercompany and inter-organization settlement controls;
-- conformance and trust mechanisms for licensed settlement partners.
+## 4. Potentially patentable subject matter
 
-This list is descriptive and does not represent a claim that any patent has been filed, granted, or is enforceable.
+Potential areas may include, without limitation:
 
-## Filing strategy
+- Sponsor-bound AI Agent financial profiles;
+- delegation of machine-readable payment authority from verified humans or organizations to AI Agents;
+- tokenized multi-rail payment credentials bound to Agent identity and policy;
+- universal payment intent routing across cards, bank rails, x402, stablecoins, wallets and local rails;
+- cryptographic binding of Agent identity, Sponsor mandate, policy, intent, credential, route, provider execution and receipt;
+- compliance-attestation models that minimize raw regulated data in the Agent protocol layer;
+- revocable, scoped autonomous-payment mandates and conformance mechanisms;
+- cross-protocol interaction among AIFP-1, AIFP-2, AIFP-3, AIFP-4/x405, AIFP-5 and AIFP-6;
+- provider-neutral certification, capability-manifest and jurisdiction-routing mechanisms.
 
-Before public release of novel implementation details, AiFinPay should obtain advice from qualified patent counsel concerning inventorship, novelty, prior art, filing jurisdiction, provisional applications, and disclosure timing. Public disclosure can affect patent rights in some jurisdictions.
+This list is descriptive only. It does not state that a patent application has been filed, that any listed subject matter is novel or patentable, or that any patent has been granted or is enforceable.
+
+## 5. Public disclosure warning
+
+Public disclosure can affect patent rights, particularly outside jurisdictions that provide a grace period. AiFinPay should obtain patent counsel before publishing implementation details that may be commercially important and potentially patentable.
+
+## 6. Filing and ownership strategy
+
+Before relying on patent protection, AiFinPay should document inventorship and assignment, conduct prior-art review, decide filing jurisdictions, evaluate provisional/priority filings where available, and confirm that all contributors have assigned or licensed necessary rights.
