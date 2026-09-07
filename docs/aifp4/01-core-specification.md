@@ -1,129 +1,268 @@
-# AIFP-4 Core Protocol Specification
+# AIFP-4 / x405 Core Protocol Specification
 
-**Version:** 0.1-draft  
-**Status:** Draft Standard
+**Version:** 0.2-draft  
+**Status:** Proposed Draft Standard
 
-The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are to be interpreted as normative requirements.
+The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL are normative requirements.
 
 ## 1. Scope
 
-AIFP-4 defines interoperable messages and controls for organization-authorized fund movement by AI agents, enterprise software, and human operators. It covers internal allocation, intercompany transfer, partner settlement, cross-border orchestration, approval, route selection, execution status, receipt generation, and reconciliation.
+AIFP-4 specifies x405, a rail-independent financial capability protocol for AI agents. The protocol defines how a verified Sponsor delegates financial authority to an Agent, how that authority is represented in an Agent Financial Profile, how payment credentials are referenced without exposing unnecessary secrets, how a universal payment intent is authorized and routed, and how execution is evidenced through a verifiable receipt.
 
-## 2. Actors
+x405 MAY route through x402, card networks, bank-transfer rails, stablecoins, crypto wallets, local payment systems, or other conformant execution adapters.
 
-- **Organization:** customer group using the protocol.
-- **Legal Entity:** incorporated or otherwise recognized entity inside an organization.
-- **Department/Cost Center:** internal budget scope.
-- **Agent:** autonomous software identity bound through AIFP-3.
-- **Human Operator:** authorized natural person acting for the organization.
-- **Beneficiary:** intended recipient.
-- **Protocol Operator:** service implementing AIFP-4 orchestration.
-- **Execution Partner:** licensed or otherwise authorized provider that performs settlement.
-- **Rail:** bank, payment network, wallet, blockchain, stablecoin, or local settlement system.
+## 2. Non-goals
 
-## 3. Identifiers
+The protocol does not, by itself:
 
-Implementations MUST use globally unique, opaque identifiers. Recommended prefixes:
+- make an AI agent a legal person;
+- make AiFinPay or an implementer a bank, issuer, custodian, PSP, money transmitter, or VASP;
+- replace KYC/KYB, AML, sanctions, PCI DSS, card-network, banking, safeguarding, or local regulatory requirements;
+- require raw KYC data, PAN/CVV, banking passwords, or unrestricted provider credentials to be disclosed to an Agent.
 
-- `org_` organization;
-- `ent_` legal entity;
-- `dept_` department;
-- `agt_` agent;
-- `ben_` beneficiary;
+## 3. Actors
+
+- **Sponsor:** human or organization with authority to create, fund, or delegate financial capability to an Agent.
+- **Agent:** autonomous software identity bound through AIFP-3 or an equivalent identity profile.
+- **Agent Platform:** company or system operating one or more Agents for itself or customers.
+- **Protocol Operator:** service implementing x405/AIFP-4 orchestration.
+- **Credential Provider:** provider issuing or exposing a tokenized payment capability.
+- **Execution Partner:** bank, issuer, payment institution, PSP, wallet, stablecoin provider, VASP, or local rail participant executing settlement under applicable rules.
+- **Merchant/Beneficiary:** recipient of the payment.
+- **Rail:** x402, card, bank, stablecoin, crypto, or local payment mechanism.
+
+## 4. Identifiers
+
+Implementations MUST use globally unique opaque identifiers and MUST NOT encode regulated personal data.
+
+Recommended prefixes:
+
+- `spn_` Sponsor;
+- `agt_` Agent;
+- `afp_` Agent Financial Profile;
+- `att_` compliance attestation;
+- `auth_` delegated authority;
+- `cred_` payment credential;
 - `pi_` payment intent;
-- `apr_` approval;
 - `rte_` route quote;
 - `ins_` settlement instruction;
-- `rcp_` treasury receipt;
-- `ptn_` partner.
+- `rcp_` universal payment receipt;
+- `ptn_` execution partner.
 
-Identifiers MUST NOT encode regulated personal data.
+## 5. Agent Financial Profile
 
-## 4. Payment Intent
+A conformant `AgentFinancialProfile` MUST contain:
 
-A `PaymentIntent` MUST include:
+- protocol version;
+- profile ID;
+- Agent identity reference;
+- Sponsor reference;
+- lifecycle state;
+- delegated-authority reference or embedded authority;
+- compliance-attestation references where required;
+- payment-credential references;
+- creation and update timestamps.
 
-- protocol and schema version;
+It MAY include organization, legal-entity, department, project, cost-center, funding-source, jurisdiction, accounting, or ERP references.
+
+Profile states MUST include at least `PROVISIONING`, `ACTIVE`, `SUSPENDED`, and `REVOKED`.
+
+A revoked profile MUST NOT authorize new payments.
+
+## 6. Compliance Attestation
+
+A `ComplianceAttestation` is a provider-issued or provider-verifiable reference to onboarding or compliance state.
+
+It SHOULD contain only the minimum data required for authorization, such as:
+
+- provider identifier;
+- subject reference;
+- subject type (`PERSON`, `ORGANIZATION`, or supported equivalent);
+- status;
+- jurisdiction;
+- issuance and expiry timestamps;
+- assurance or scope indicators;
+- signature or authenticated lookup reference.
+
+Raw identity documents SHOULD remain with the regulated provider.
+
+An onboarding attestation MUST NOT be interpreted as proof that ongoing AML, sanctions, fraud, or transaction-monitoring duties have ended.
+
+## 7. Delegated Authority
+
+A `DelegatedAuthority` MUST define the Agent's permitted financial scope.
+
+Controls MAY include:
+
+- per-transaction, daily, monthly, or rolling limits;
+- allowed or blocked merchants and beneficiaries;
+- MCC or merchant-category controls;
+- country and jurisdiction controls;
+- allowed currencies and assets;
+- allowed payment rails;
+- allowed purposes;
+- time windows and expiry;
+- velocity rules;
+- approval thresholds;
+- funding-source restrictions;
+- recurring-payment permissions;
+- emergency freeze and revocation.
+
+Authority MUST be attributable to the Sponsor or another identity with valid delegated power.
+
+## 8. Payment Credentials
+
+A `PaymentCredential` is a tokenized handle to a payment capability.
+
+Credential types MAY include:
+
+- `CARD_TOKEN`;
+- `BANK_ACCOUNT_TOKEN`;
+- `CRYPTO_WALLET`;
+- `STABLECOIN_ACCOUNT`;
+- `X402_WALLET`;
+- `LOCAL_RAIL_TOKEN`.
+
+Credentials MUST have an owner/provider reference, status, allowed rails, and revocation semantics.
+
+Card profiles SHOULD use issuer or network tokens or provider-side handles. Raw PAN/CVV MUST NOT be required by the x405 core protocol.
+
+## 9. Universal Payment Intent
+
+A `UniversalPaymentIntent` MUST include:
+
+- protocol version;
 - intent ID;
-- organization and source legal entity;
-- initiating identity;
+- financial-profile ID;
+- initiating Agent identity;
 - amount and currency or asset;
-- beneficiary reference;
-- transaction purpose code;
-- requested execution date;
+- merchant/beneficiary reference or destination descriptor;
+- purpose;
+- payment mode (`AUTO` or an explicit rail profile);
 - creation and expiry timestamps;
 - idempotency key;
 - nonce;
-- canonical request hash;
-- signature or authenticated channel proof.
+- canonical intent hash;
+- authenticated request or signature evidence.
 
-Optional fields MAY include invoice, purchase order, contract, tax, cost-center, project, metadata, preferred rail, and delivery constraints.
+Optional fields MAY include preferred rails, invoice, purchase order, contract, merchant endpoint, x402 resource, MCC expectation, delivery constraints, metadata, or accounting references.
 
-## 5. Authorization
+## 10. Authorization
 
-The implementation MUST verify:
+Before execution, a conformant implementation MUST verify:
 
-1. identity validity;
-2. organization membership;
-3. explicit authority for the action;
-4. source account or budget scope;
-5. current policy version;
-6. transaction limits;
-7. beneficiary status;
-8. jurisdiction, currency, asset, rail, and purpose eligibility;
-9. duplicate and replay controls;
-10. active freeze controls.
+1. financial-profile state;
+2. Agent identity binding;
+3. Sponsor/delegation validity;
+4. authority expiry and revocation;
+5. amount and velocity limits;
+6. merchant/beneficiary eligibility;
+7. country, currency, asset, rail, and purpose eligibility;
+8. credential status;
+9. compliance conditions required by the selected provider or jurisdiction;
+10. duplicate and replay controls;
+11. freeze controls;
+12. required approvals.
 
-The result MUST be `AUTHORIZED`, `DENIED`, or `APPROVAL_REQUIRED`, with machine-readable reason codes.
+The result MUST be `AUTHORIZED`, `DENIED`, or `APPROVAL_REQUIRED` with machine-readable reason codes.
 
-## 6. Approval
+## 11. Routing
 
-Approvals MUST bind to the immutable intent hash. An implementation MUST invalidate approvals after any material intent change. The approval record MUST contain approver identity, role, decision, timestamp, expiry, and signature evidence.
+When `payment_mode=AUTO`, the router MUST consider only routes permitted by authority, credential capability, merchant acceptance, provider eligibility, and jurisdiction rules.
 
-## 7. Route Quote
+A route quote SHOULD disclose:
 
-A route quote MUST disclose:
-
-- partner and rail;
-- source and destination country;
-- source amount and currency;
-- beneficiary amount and currency;
-- exchange rate and markup;
-- all known fees separated by category;
-- estimated execution time;
-- reversibility/return characteristics;
+- rail profile;
+- provider/partner;
+- credential reference;
+- source and destination currency/asset;
+- fees and FX where known;
+- expected timing;
+- finality/reversibility characteristics;
 - quote expiry;
 - compliance conditions;
-- route eligibility evidence version.
+- reliability/availability metadata where exposed.
 
-## 8. Settlement Instruction
+The router MAY select x402, card, bank, stablecoin, crypto, or local rails.
 
-A settlement instruction MUST be created only after authorization and required approvals. It MUST include the intent hash, selected route quote, partner, execution parameters, callback endpoint identifier, idempotency key, expiry, and signature.
+## 12. Execution
 
-## 9. Partner response
+A settlement instruction MUST be created only after authorization and required approvals.
 
-An execution partner MUST return a unique reference and one of: `ACCEPTED`, `COMPLIANCE_HOLD`, `REJECTED`, `PROCESSING`, `SETTLED`, `FAILED`, or `RETURNED`.
+The Execution Partner remains responsible for any regulated execution obligations assigned to it by law, license, scheme rules, and contract.
 
-Callbacks MUST be signed and replay-protected.
+Partner callbacks MUST be authenticated, idempotent, and replay-protected.
 
-## 10. Treasury Receipt
+## 13. Universal Payment Receipt
 
-The final receipt MUST cryptographically bind the original intent, identity, policy version, approvals, selected route, fees, FX, execution partner reference, final status, timestamps, and receipt signing key ID.
+A final `UniversalPaymentReceipt` SHOULD bind:
 
-Receipts MUST be independently verifiable without trusting mutable dashboard data.
+- original intent and intent hash;
+- Agent and financial-profile references;
+- authority version;
+- approval evidence;
+- selected rail and credential reference;
+- execution partner reference;
+- fees and FX where applicable;
+- final state;
+- timestamps;
+- receipt key identifier and signature.
 
-## 11. Reconciliation
+Sensitive credential secrets MUST NOT appear in receipts.
 
-Implementations MUST support matching between internal instruction, partner statement, and settlement-rail evidence. Mismatches MUST create an auditable exception and MUST NOT be silently corrected.
+## 14. State model
 
-## 12. Error handling
+At minimum, implementations SHOULD support:
 
-Errors MUST include stable code, human-readable message, retryability, correlation ID, and remediation category. Sensitive internal or compliance details MUST NOT be exposed to unauthorized clients.
+```text
+DRAFT → SUBMITTED → AUTHORIZED | DENIED | APPROVAL_REQUIRED
+AUTHORIZED → ROUTING → ROUTE_SELECTED | NO_ROUTE
+ROUTE_SELECTED → INSTRUCTION_SENT → PROCESSING
+PROCESSING → SETTLED | FAILED | RETURNED
+SETTLED → RECONCILED
+```
 
-## 13. Versioning
+Profiles and credentials have independent lifecycle and freeze state.
 
-Breaking changes require a new major protocol version. Schemas and partner capability manifests MUST be versioned. A transaction MUST remain interpretable under the versions recorded at execution time.
+## 15. x402 interoperability
 
-## 14. Conformance
+x405 does not replace x402. A conformant `x405-x402` profile MAY use x402 payment requirements and settlement schemes as an execution route.
 
-A conformant implementation MUST pass published schema validation, state-transition, idempotency, signature, replay, policy, approval, partner callback, failure, and reconciliation test vectors.
+The x405 layer is responsible for determining whether the Agent is authorized and financially capable of satisfying the x402 request under its delegated policy.
+
+## 16. Security
+
+Conformant implementations MUST provide:
+
+- least privilege;
+- deny-by-default authorization;
+- credential scoping and revocation;
+- nonce and expiry validation;
+- idempotency;
+- replay protection;
+- tamper-evident audit evidence;
+- independent freeze controls;
+- secure key-management profiles;
+- tokenization/minimization of sensitive financial data.
+
+## 17. Versioning
+
+Breaking changes require a new major protocol version. v0.2 is additive to the existing v0.1 treasury-oriented reference implementation.
+
+## 18. Conformance classes
+
+Implementations MAY claim one or more profiles:
+
+- `x405-Core`;
+- `x405-Agent`;
+- `x405-Provider`;
+- `x405-Card`;
+- `x405-Bank`;
+- `x405-x402`;
+- `x405-DigitalAsset`.
+
+A claimed profile MUST pass its published schema, state-transition, authorization, replay, revocation, credential, routing, failure, and receipt-verification test vectors.
+
+## 19. Naming
+
+`x405` is the protocol name and does not redefine HTTP status code 405.

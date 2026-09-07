@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aifinpay.io/schemas/x405/agent-financial-profile.schema.json",
+  "title": "x405 Agent Financial Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "profile_id", "agent_id", "agent_passport_id", "sponsor_id", "state", "authority_id", "compliance_attestation_ids", "credential_ids", "created_at", "updated_at"],
+  "properties": {
+    "protocol_version": { "const": "0.2" },
+    "profile_id": { "type": "string", "pattern": "^afp_[A-Za-z0-9_-]+$" },
+    "agent_id": { "type": "string" },
+    "agent_passport_id": { "type": "string" },
+    "sponsor_id": { "type": "string" },
+    "organization_id": { "type": "string" },
+    "state": { "enum": ["PROVISIONING", "ACTIVE", "SUSPENDED", "REVOKED"] },
+    "authority_id": { "type": "string", "pattern": "^auth_[A-Za-z0-9_-]+$" },
+    "compliance_attestation_ids": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "credential_ids": { "type": "array", "items": { "type": "string", "pattern": "^cred_[A-Za-z0-9_-]+$" }, "uniqueItems": true },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
