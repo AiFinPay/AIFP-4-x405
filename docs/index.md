@@ -11,6 +11,7 @@
 
 ## Trust, security and regulation
 
+- **[Global Compliance Framework](../Compliance/README.md)**
 - [Security model](security-model.md)
 - [Compliance boundaries](compliance-boundaries.md)
 - [Global licensed partner network](global-partner-network.md)
