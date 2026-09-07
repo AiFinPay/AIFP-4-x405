@@ -2,7 +2,7 @@
   "name": "@aifinpay/aifp-4-reference",
   "version": "0.1.0",
   "private": false,
-  "description": "Reference implementation of the AIFP-4 autonomous treasury protocol",
+  "description": "Reference implementation and type definitions for x405 / AIFP-4, the universal payment protocol for AI agents.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

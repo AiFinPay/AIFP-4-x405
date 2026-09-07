@@ -1,73 +1,128 @@
-# Compliance and Regulatory Boundaries
+# x405 / AIFP-4 Compliance and Regulatory Boundaries
+
+> This document is a technical responsibility model, not legal advice. Production deployment requires qualified payments/regulatory counsel and the relevant licensed providers.
 
 ## Protocol position
 
-AIFP-4 is software infrastructure and a financial messaging/orchestration protocol. It is not, by specification alone, a bank, custodian, payment institution, money transmitter, exchange, e-money issuer, or licensed virtual-asset provider.
+x405/AIFP-4 is software infrastructure and a financial capability, authorization, routing, and messaging protocol. By specification alone it is not a bank, card issuer, custodian, payment institution, money transmitter, exchange, e-money issuer, acquirer, or licensed virtual-asset provider.
+
+## The Sponsor model
+
+An AI Agent does not become a legal person merely because it has an x405 Financial Profile.
+
+The protocol models a **Sponsor** — a human, company, developer, or Agent Platform with authority to delegate financial capability to the Agent.
+
+The Agent's ability to pay is derived from that delegated authority and from credentials provided under the applicable provider relationship.
+
+## KYC/KYB onboarding
+
+Where required, KYC/KYB SHOULD be performed by the regulated provider responsible for the relevant account, card, wallet, payment service, or regulated relationship.
+
+x405 SHOULD consume tokenized references or attestations rather than duplicating raw KYC data.
+
+A provider MAY treat initial identity onboarding as reusable for subsequent Agent provisioning under the same customer relationship, subject to its legal, risk, scheme, and policy requirements.
+
+## AML and sanctions are not “one-time”
+
+A successful initial KYC/KYB event MUST NOT be represented as the end of compliance obligations.
+
+Depending on the provider and jurisdiction, ongoing obligations can include:
+
+- sanctions screening;
+- PEP screening;
+- transaction monitoring;
+- fraud monitoring;
+- suspicious activity reporting;
+- source-of-funds/source-of-wealth review;
+- re-KYC/KYB;
+- periodic customer review;
+- card-network or banking monitoring.
+
+The protocol can carry status and attestation references, but the regulated provider remains responsible for obligations assigned to it by law, license, scheme rules, and contract.
+
+## Card issuing profile
+
+For card-enabled Agents:
+
+- issuance MUST occur through an eligible issuer/program structure;
+- cardholder/customer identification must follow issuer and scheme requirements;
+- raw PAN/CVV SHOULD remain outside the Agent context;
+- x405 SHOULD use issuer/network tokens or provider-side payment handles;
+- PCI DSS scope and responsibilities must be explicitly allocated;
+- chargebacks, disputes, refunds, fraud, and card-network rules remain part of the provider/issuer operating model.
+
+## Bank-transfer profile
+
+For account and bank-transfer capabilities, the relevant regulated provider owns or coordinates the required account-opening, safeguarding, transmission, FX, sanctions, reporting, and local-rail obligations according to its role.
+
+## Digital-asset profile
+
+Stablecoin or crypto execution may create VASP/CASP, custody, exchange, Travel Rule, sanctions, tax, or money-transmission obligations depending on structure and jurisdiction.
+
+The presence of a non-custodial wallet does not automatically remove all regulatory obligations.
 
 ## Responsibility model
 
-### AiFinPay protocol operator
-
-May provide:
+### AiFinPay / x405 protocol operator may provide
 
 - protocol standards and schemas;
-- organization and agent authorization infrastructure;
-- policy and approval orchestration;
-- route discovery and partner connectivity;
-- signed audit receipts;
-- integration, monitoring, and reconciliation tooling.
+- Agent Financial Profiles;
+- AIFP-3 identity binding;
+- delegated-authority and policy infrastructure;
+- tokenized credential registry;
+- route discovery and provider connectivity;
+- signed receipts, monitoring, and reconciliation tooling.
 
-AiFinPay must not represent that these functions remove licensing obligations where regulated execution, custody, exchange, transmission, acquiring, issuing, or safeguarding occurs.
-
-### Licensed execution partner
-
-Depending on contract and jurisdiction, the partner may own:
+### Regulated provider / execution partner may provide
 
 - customer onboarding and regulated account opening;
 - KYC/KYB and beneficial-owner verification;
-- AML, sanctions, PEP, and transaction monitoring;
+- card issuance and program management;
+- AML, sanctions, PEP, fraud, and transaction monitoring;
 - safeguarding or custody;
 - payment execution;
 - FX or asset conversion;
 - Travel Rule duties;
 - regulatory reporting;
 - suspicious activity reporting;
-- disputes, returns, and complaints.
+- disputes, returns, complaints, and chargebacks.
 
-### Customer organization
+### Sponsor/customer organization remains responsible for
 
-The customer remains responsible for:
-
-- lawful transaction purpose;
-- corporate authority and internal controls;
-- tax, accounting, transfer-pricing, and documentation obligations;
-- employee and agent delegation;
-- accuracy of beneficiary and invoice data;
-- use of the protocol within approved jurisdictions and contracts.
-
-## Jurisdiction packs
-
-AIFP-4 represents country-specific requirements as versioned jurisdiction packs. A pack can define mandatory fields, prohibited purposes, supported entity types, approval thresholds, retention rules, data residency, Travel Rule requirements, and partner eligibility.
-
-Jurisdiction packs are configuration and implementation aids. They are not legal opinions and require review by qualified counsel and the relevant licensed partner.
+- lawful purpose;
+- authority to provision the Agent;
+- internal delegation and approvals;
+- tax/accounting obligations;
+- accuracy of merchant/beneficiary data;
+- use of the Agent inside approved policies and jurisdictions;
+- revoking access when the Agent or credential is compromised or no longer authorized.
 
 ## Data roles
 
-Every deployment must document:
+Every production deployment must document:
 
-- data controller and processor roles;
+- controller/processor roles;
 - regulated-data owner;
-- retention period;
-- deletion and legal-hold rules;
+- retention and deletion;
+- legal holds;
 - cross-border transfer mechanism;
 - encryption and access controls;
-- subprocessor list;
-- breach notification procedure.
+- subprocessors;
+- breach notification;
+- PCI DSS boundaries for card data where relevant.
 
-## Activation rule
+## Activation states
 
-A country or corridor may be shown as `specified`, `sandbox`, `partner_pending`, `limited`, or `production`. Production status requires active contractual, legal, technical, security, and operational approval.
+A provider, country, corridor, credential type, or rail can be marked:
 
-## Required disclaimer
+- `specified`;
+- `sandbox`;
+- `partner_pending`;
+- `limited`;
+- `production`.
 
-No public documentation should state that AIFP-4 is licensed worldwide. The correct claim is that the protocol is designed for global coverage through locally licensed partners, with production availability activated jurisdiction by jurisdiction.
+`production` requires the applicable contractual, legal, technical, security, scheme, and operational approvals.
+
+## Public-claim rule
+
+Documentation may describe x405 as a **proposed open standard** or **universal payment protocol design**. It must not claim formal international-standard status, worldwide licensing, or universal market adoption unless that becomes factually true and verifiable.

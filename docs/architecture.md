@@ -1,111 +1,191 @@
-# AIFP-4 Architecture
+# x405 / AIFP-4 Architecture
 
 ## 1. Design objective
 
-AIFP-4 is a global control plane for corporate money movement. It coordinates authorization, policy, approval, routing, execution, evidence, and reconciliation. It does not require AiFinPay to become the licensed payment institution in every country.
+x405 is a universal financial capability layer for AI agents. It separates **who the Agent is and what it may spend** from **which regulated payment rail ultimately moves value**.
 
-## 2. Planes
+The protocol is designed so a single Agent can hold one persistent financial profile while using multiple tokenized payment credentials and settlement rails.
+
+```text
+Identity → Sponsor → Compliance Attestation → Financial Profile → Authority → Credential → Intent → Route → Execution → Receipt
+```
+
+## 2. Architecture planes
 
 ### Identity plane
 
-AIFP-3 Agent Passport binds an agent or human operator to an organization, legal entity, department, role, permissions, limits, and signing keys.
+AIFP-3 Agent Passport binds the Agent to a persistent identity and to its Sponsor or organization.
 
-### Organization plane
+### Sponsor and onboarding plane
 
-The Organization Registry models groups, legal entities, branches, departments, cost centers, projects, partners, beneficiaries, accounts, wallets, and approved rails.
+A human, company, developer, or Agent Platform is onboarded by an eligible regulated provider where required. x405 consumes a tokenized attestation or provider reference; it does not require raw KYC documents to be copied into the protocol layer.
 
-### Policy plane
+### Financial-profile plane
 
-The Policy Engine evaluates every payment intent against corporate rules: amount, purpose, beneficiary, country, currency, asset, time, budget, velocity, risk, and approval requirements.
+`AgentFinancialProfile` is the persistent container for:
 
-### Approval plane
+- Agent identity;
+- Sponsor reference;
+- compliance attestations;
+- delegated authority;
+- funding-source references;
+- credential references;
+- lifecycle and freeze state.
 
-The Approval Graph supports zero, one, or multiple approvals; sequential and parallel approvals; M-of-N decisions; expiry; delegated authority; and emergency cancellation.
+### Authority and policy plane
+
+`DelegatedAuthority` limits what the Agent can do by amount, velocity, merchant, MCC, beneficiary, country, currency, purpose, rail, time, funding source, and required approval.
+
+### Credential plane
+
+The credential layer exposes tokenized handles instead of unnecessary raw secrets.
+
+Credential profiles include card tokens, bank-account handles, wallets, stablecoin capabilities, x402 wallets, and local-rail tokens.
+
+### Universal intent plane
+
+The Agent submits one rail-independent payment intent. `payment_mode=AUTO` tells x405 to choose an eligible rail; an explicit mode can restrict routing to a specific profile.
 
 ### Routing plane
 
-The Global Settlement Router matches an approved intent to eligible licensed partners and rails. It scores cost, FX, speed, reliability, jurisdiction, liquidity, reversibility, and compliance eligibility.
+The router filters and scores routes based on:
+
+- authority;
+- credential availability;
+- merchant acceptance;
+- provider eligibility;
+- jurisdiction;
+- compliance status;
+- cost/FX;
+- speed and reliability;
+- finality and reversibility.
 
 ### Execution plane
 
-Licensed partners execute regulated settlement. A partner may be a bank, payment institution, e-money institution, card issuer, stablecoin infrastructure provider, regulated virtual-asset provider, or local payment network participant.
+Licensed or otherwise eligible partners perform regulated settlement. The execution domain can include banks, issuers, PSPs, card processors, payment institutions, stablecoin providers, VASPs, wallets, and local rail participants.
 
 ### Evidence plane
 
-Every state transition produces signed evidence. The final Treasury Receipt includes the original intent hash, agent identity, organization policy version, approvals, route, partner reference, timestamps, and final status.
+Signed receipts bind intent, identity, authority, selected rail, provider reference, final state, and timestamps without exposing raw credential secrets.
 
-### Integration plane
-
-Webhooks and connectors export events to ERP, accounting, treasury management, SIEM, data warehouse, and audit systems.
-
-## 3. Trust boundaries
+## 3. End-to-end trust boundaries
 
 ```mermaid
 flowchart TB
-  subgraph Customer[Customer Trust Domain]
+  subgraph SponsorDomain[Sponsor / Customer Trust Domain]
+    Sponsor[Human / Company / Agent Platform]
     Agent[AI Agent]
-    Human[Human Approver]
-    ERP[ERP/TMS]
-    OrgKeys[Organization Keys]
+    Keys[Sponsor / Agent Keys]
   end
-  subgraph AIFP[AiFinPay Protocol Domain]
-    Gateway[API Gateway]
-    Passport[AIFP-3 Verification]
-    Registry[Organization Registry]
+
+  subgraph IdentityDomain[Identity Domain]
+    KYC[KYC / KYB Provider]
+    Passport[AIFP-3 Agent Passport]
+  end
+
+  subgraph X405[x405 / AIFP-4 Protocol Domain]
+    Profile[Agent Financial Profile]
+    Authority[Delegated Authority]
+    Credential[Credential Registry]
     Policy[Policy Engine]
-    Approval[Approval Service]
-    Router[Global Router]
+    Intent[Universal Payment Intent]
+    Router[Universal Payment Router]
     Receipt[Receipt Authority]
-    Ledger[Audit Ledger]
   end
-  subgraph Partner[Licensed Partner Domain]
-    PartnerAPI[Partner API]
-    Compliance[Partner Compliance]
-    Settlement[Settlement Rail]
+
+  subgraph Execution[Execution Domains]
+    X402[x402]
+    Card[Card / Issuer / Processor]
+    Bank[Bank / ACH / SEPA / SWIFT]
+    Stable[Stablecoin Provider]
+    Wallet[Crypto Wallet]
+    Local[Local Payment Rail]
   end
-  Agent --> Gateway
-  Human --> Approval
-  ERP --> Gateway
-  OrgKeys --> Gateway
-  Gateway --> Passport --> Registry --> Policy --> Approval --> Router
-  Router --> PartnerAPI --> Compliance --> Settlement
-  Settlement --> Receipt --> Ledger --> ERP
+
+  Sponsor --> KYC
+  KYC --> Passport
+  Sponsor --> Passport
+  Passport --> Profile
+  Agent --> Intent
+  Keys --> Intent
+  Profile --> Authority
+  Profile --> Credential
+  Intent --> Policy
+  Authority --> Policy
+  Credential --> Router
+  Policy --> Router
+  Router --> X402
+  Router --> Card
+  Router --> Bank
+  Router --> Stable
+  Router --> Wallet
+  Router --> Local
+  X402 --> Receipt
+  Card --> Receipt
+  Bank --> Receipt
+  Stable --> Receipt
+  Wallet --> Receipt
+  Local --> Receipt
 ```
 
-No single agent credential can both create policy, approve its own high-risk payment, and execute settlement.
+## 4. Card profile
 
-## 4. Transaction path
+A card-enabled Agent SHOULD receive a provider-side or network-token credential reference rather than raw PAN/CVV.
 
-1. Client creates `PaymentIntent` with idempotency key.
-2. AIFP-3 verifies identity, organization binding, and authority.
-3. Registry resolves source entity, department, budget, beneficiary, and permitted rails.
-4. Policy engine returns allow, deny, or approval-required.
-5. Required approvals are collected and cryptographically bound to the immutable intent.
-6. Router requests quotes only from eligible licensed partners.
-7. Organization or policy selects a route.
-8. A signed `SettlementInstruction` is transmitted to the partner.
-9. Partner performs its regulated checks and accepts, holds, rejects, or executes.
-10. Signed callbacks update the state machine.
-11. AIFP-4 issues a final Treasury Receipt.
-12. Reconciliation matches the receipt, partner statement, and bank/blockchain result.
+Typical flow:
 
-## 5. Availability model
+```text
+Verified Sponsor
+→ provider onboarding
+→ Agent Passport
+→ Agent Financial Profile
+→ virtual/tokenized card credential
+→ spending policy
+→ Agent payment intent
+→ issuer/processor authorization
+→ merchant
+→ signed x405 receipt
+```
 
-- Multi-region stateless APIs.
-- Durable event log and idempotent consumers.
-- At-least-once event delivery with deduplication.
-- Partner circuit breakers and health scoring.
-- No automatic reroute after execution acceptance unless the partner contract and transaction semantics permit it.
-- Degraded mode allows read-only audit and receipt verification when execution services are unavailable.
+Card lifecycle operations can include provision, set limits, freeze, unfreeze, rotate, replace, and revoke.
 
-## 6. Data minimization
+## 5. Bank profile
 
-The public protocol defines required fields but encourages tokenized references for sensitive identity, bank, tax, and compliance data. Raw regulated data should remain with the organization or licensed partner whenever possible.
+Bank payments can use tokenized account references and provider adapters for rails such as ACH, SEPA, Faster Payments, SWIFT, RTP, or other local systems where supported.
 
-## 7. Deployment profiles
+The Agent SHOULD not receive banking portal credentials.
 
-- SaaS control plane operated by AiFinPay.
-- Enterprise dedicated tenant.
-- Regulated partner white-label deployment.
-- Sovereign or regional deployment with local data residency.
-- Hybrid deployment where policy and keys remain customer-controlled.
+## 6. x402 profile
+
+When a merchant returns or advertises an x402-compatible payment requirement, x405 can:
+
+1. parse the payment requirement;
+2. bind it to a Universal Payment Intent;
+3. verify Agent authority;
+4. select an eligible x402 wallet/payment scheme;
+5. execute through the x402-compatible adapter;
+6. attach the settlement evidence to the x405 receipt.
+
+## 7. Data minimization
+
+The protocol SHOULD move references, attestations, hashes, policy facts, and tokenized credential handles rather than raw regulated data.
+
+Sensitive data such as identity documents, PAN/CVV, bank passwords, recovery phrases, and provider master secrets should remain inside the appropriate regulated, issuer, wallet, HSM/MPC, or customer-controlled boundary.
+
+## 8. Availability and revocation
+
+- Financial profiles, credentials, Agents, merchants, and rails can be frozen independently.
+- Revocation MUST take precedence over cached authorization.
+- Payment requests MUST have bounded lifetime.
+- Provider adapters SHOULD use circuit breakers and health state.
+- No automatic reroute after execution acceptance unless the rail's semantics explicitly allow it.
+- Read-only receipt verification SHOULD remain available during execution outages.
+
+## 9. Deployment profiles
+
+- AiFinPay SaaS protocol control plane;
+- enterprise dedicated tenant;
+- regulated-provider white label;
+- Agent Platform embedded deployment;
+- sovereign/regional deployment with data residency;
+- hybrid deployment with customer-controlled policy and keys.

@@ -1,18 +1,83 @@
 openapi: 3.1.0
 info:
-  title: AIFP-4 Global Treasury Protocol API
-  version: 0.1.0-draft
-  description: Global treasury messaging and settlement orchestration for autonomous organizations through licensed execution partners.
+  title: x405 / AIFP-4 Universal Agent Payment API
+  version: 0.2.0-draft
+  description: >-
+    Draft API surface for persistent AI-agent financial profiles, delegated authority,
+    tokenized payment credentials, universal payment intents, multi-rail routing,
+    execution, and verifiable receipts. x405 is a proposed open standard and does not
+    itself provide regulated banking, issuing, custody, or money-transmission status.
 servers:
-  - url: https://api.example.aifp4.org/v1
+  - url: https://api.example.x405.org/v1
     description: Reference placeholder; not a production AiFinPay endpoint
 security:
   - bearerAuth: []
 paths:
+  /financial-profiles:
+    post:
+      summary: Create an Agent Financial Profile
+      operationId: createFinancialProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/FinancialProfileCreate' }
+      responses:
+        '201':
+          description: Financial profile created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FinancialProfile' }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+  /financial-profiles/{profile_id}:
+    get:
+      summary: Read an Agent Financial Profile
+      operationId: getFinancialProfile
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: Current profile
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/FinancialProfile' }
+        '404': { $ref: '#/components/responses/Error' }
+  /financial-profiles/{profile_id}/credentials:
+    get:
+      summary: List tokenized payment credentials available to the profile
+      operationId: listPaymentCredentials
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      responses:
+        '200':
+          description: Credentials
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/PaymentCredential' }
+    post:
+      summary: Register or provision a tokenized payment credential
+      operationId: createPaymentCredential
+      parameters:
+        - $ref: '#/components/parameters/ProfileId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PaymentCredentialCreate' }
+      responses:
+        '201':
+          description: Credential registered
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PaymentCredential' }
   /payment-intents:
     post:
-      summary: Create a payment intent
-      operationId: createPaymentIntent
+      summary: Create a rail-independent x405 payment intent
+      operationId: createUniversalPaymentIntent
       parameters:
         - in: header
           name: Idempotency-Key
@@ -22,8 +87,7 @@ paths:
         required: true
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/PaymentIntentCreate'
+            schema: { $ref: '#/components/schemas/PaymentIntentCreate' }
       responses:
         '201':
           description: Intent created
@@ -33,22 +97,9 @@ paths:
         '400': { $ref: '#/components/responses/Error' }
         '401': { $ref: '#/components/responses/Error' }
         '409': { $ref: '#/components/responses/Error' }
-  /payment-intents/{intent_id}:
-    get:
-      summary: Read payment intent and current state
-      operationId: getPaymentIntent
-      parameters:
-        - $ref: '#/components/parameters/IntentId'
-      responses:
-        '200':
-          description: Current intent
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/PaymentIntent' }
-        '404': { $ref: '#/components/responses/Error' }
   /payment-intents/{intent_id}/authorize:
     post:
-      summary: Evaluate identity, authority, budget, and policy
+      summary: Evaluate profile, authority, credential, policy, and compliance conditions
       operationId: authorizePaymentIntent
       parameters:
         - $ref: '#/components/parameters/IntentId'
@@ -58,27 +109,9 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/AuthorizationDecision' }
-        '409': { $ref: '#/components/responses/Error' }
-  /payment-intents/{intent_id}/approvals:
-    post:
-      summary: Submit an approval decision
-      operationId: submitApproval
-      parameters:
-        - $ref: '#/components/parameters/IntentId'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/ApprovalDecision' }
-      responses:
-        '201':
-          description: Approval recorded
-          content:
-            application/json:
-              schema: { $ref: '#/components/schemas/ApprovalRecord' }
   /payment-intents/{intent_id}/route-quotes:
     post:
-      summary: Discover eligible licensed-partner routes
+      summary: Discover eligible x402, card, bank, stablecoin, crypto, or local routes
       operationId: createRouteQuotes
       parameters:
         - $ref: '#/components/parameters/IntentId'
@@ -92,7 +125,7 @@ paths:
                 items: { $ref: '#/components/schemas/RouteQuote' }
   /payment-intents/{intent_id}/execute:
     post:
-      summary: Send an approved settlement instruction to the selected partner
+      summary: Execute an authorized payment through the selected route
       operationId: executePaymentIntent
       parameters:
         - $ref: '#/components/parameters/IntentId'
@@ -107,58 +140,46 @@ paths:
                 route_quote_id: { type: string }
       responses:
         '202':
-          description: Settlement instruction accepted for processing
+          description: Execution accepted
           content:
             application/json:
               schema: { $ref: '#/components/schemas/SettlementStatus' }
   /payment-intents/{intent_id}/receipt:
     get:
-      summary: Retrieve the verifiable treasury receipt
-      operationId: getTreasuryReceipt
+      summary: Retrieve the verifiable Universal Payment Receipt
+      operationId: getUniversalPaymentReceipt
       parameters:
         - $ref: '#/components/parameters/IntentId'
       responses:
         '200':
-          description: Signed treasury receipt
+          description: Signed receipt
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/TreasuryReceipt' }
+              schema: { $ref: '#/components/schemas/UniversalPaymentReceipt' }
   /partners/capabilities:
     get:
-      summary: List active signed partner capability manifests available to the caller
+      summary: List active provider capability manifests
       operationId: listPartnerCapabilities
       responses:
         '200':
-          description: Partner capabilities
+          description: Provider capabilities
           content:
             application/json:
               schema:
                 type: array
                 items: { $ref: '#/components/schemas/PartnerCapability' }
-  /webhooks/partner-events:
-    post:
-      summary: Receive signed partner settlement events
-      operationId: receivePartnerEvent
-      security:
-        - partnerSignature: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema: { $ref: '#/components/schemas/PartnerEvent' }
-      responses:
-        '204': { description: Event accepted idempotently }
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-    partnerSignature:
-      type: apiKey
-      in: header
-      name: AIFP-Partner-Signature
   parameters:
+    ProfileId:
+      in: path
+      name: profile_id
+      required: true
+      schema: { type: string, pattern: '^afp_[A-Za-z0-9_-]+$' }
     IntentId:
       in: path
       name: intent_id
@@ -171,24 +192,86 @@ components:
         application/json:
           schema: { $ref: '#/components/schemas/Error' }
   schemas:
+    Rail:
+      type: string
+      enum: [X402, CARD, BANK, STABLECOIN, CRYPTO, LOCAL]
     Money:
       type: object
       required: [amount, currency]
       properties:
-        amount: { type: string, pattern: '^[0-9]+(\.[0-9]+)?$' }
-        currency: { type: string, minLength: 3, maxLength: 12 }
+        amount: { type: string, pattern: '^[0-9]+(\\.[0-9]+)?$' }
+        currency: { type: string, minLength: 3, maxLength: 16 }
+    FinancialProfileCreate:
+      type: object
+      required: [agent_id, agent_passport_id, sponsor_id, authority_id]
+      properties:
+        agent_id: { type: string }
+        agent_passport_id: { type: string }
+        sponsor_id: { type: string }
+        organization_id: { type: string }
+        authority_id: { type: string }
+        compliance_attestation_ids:
+          type: array
+          items: { type: string }
+    FinancialProfile:
+      allOf:
+        - $ref: '#/components/schemas/FinancialProfileCreate'
+        - type: object
+          required: [protocol_version, profile_id, state, credential_ids, created_at, updated_at]
+          properties:
+            protocol_version: { const: '0.2' }
+            profile_id: { type: string }
+            state: { type: string, enum: [PROVISIONING, ACTIVE, SUSPENDED, REVOKED] }
+            credential_ids:
+              type: array
+              items: { type: string }
+            created_at: { type: string, format: date-time }
+            updated_at: { type: string, format: date-time }
+    PaymentCredentialCreate:
+      type: object
+      required: [provider_id, type, allowed_rails, token_reference]
+      properties:
+        provider_id: { type: string }
+        type:
+          type: string
+          enum: [CARD_TOKEN, BANK_ACCOUNT_TOKEN, CRYPTO_WALLET, STABLECOIN_ACCOUNT, X402_WALLET, LOCAL_RAIL_TOKEN]
+        allowed_rails:
+          type: array
+          items: { $ref: '#/components/schemas/Rail' }
+        currency_or_assets:
+          type: array
+          items: { type: string }
+        token_reference: { type: string }
+        expires_at: { type: string, format: date-time }
+    PaymentCredential:
+      allOf:
+        - $ref: '#/components/schemas/PaymentCredentialCreate'
+        - type: object
+          required: [credential_id, profile_id, state, created_at]
+          properties:
+            credential_id: { type: string }
+            profile_id: { type: string }
+            state: { type: string, enum: [PROVISIONING, ACTIVE, SUSPENDED, REVOKED, EXPIRED] }
+            created_at: { type: string, format: date-time }
     PaymentIntentCreate:
       type: object
-      required: [organization_id, source_entity_id, initiating_identity_id, beneficiary_id, money, purpose_code, expires_at, nonce]
+      required: [financial_profile_id, initiating_agent_id, merchant_or_beneficiary, money, purpose_code, payment_mode, expires_at, nonce]
       properties:
-        organization_id: { type: string }
-        source_entity_id: { type: string }
-        department_id: { type: string }
-        initiating_identity_id: { type: string }
-        beneficiary_id: { type: string }
+        financial_profile_id: { type: string }
+        initiating_agent_id: { type: string }
+        merchant_or_beneficiary: { type: string }
         money: { $ref: '#/components/schemas/Money' }
         purpose_code: { type: string }
-        requested_execution_date: { type: string, format: date }
+        payment_mode:
+          oneOf:
+            - type: string
+              const: AUTO
+            - $ref: '#/components/schemas/Rail'
+        preferred_rails:
+          type: array
+          items: { $ref: '#/components/schemas/Rail' }
+        merchant_endpoint: { type: string, format: uri }
+        x402_resource: { type: string }
         expires_at: { type: string, format: date-time }
         nonce: { type: string }
         metadata: { type: object, additionalProperties: true }
@@ -196,52 +279,33 @@ components:
       allOf:
         - $ref: '#/components/schemas/PaymentIntentCreate'
         - type: object
-          required: [intent_id, state, created_at, intent_hash]
+          required: [protocol_version, intent_id, state, created_at, intent_hash]
           properties:
+            protocol_version: { const: '0.2' }
             intent_id: { type: string }
-            state: { $ref: '#/components/schemas/State' }
+            state:
+              type: string
+              enum: [DRAFT, SUBMITTED, DENIED, APPROVAL_REQUIRED, AUTHORIZED, REJECTED, EXPIRED, QUOTING, ROUTE_SELECTED, NO_ROUTE, INSTRUCTION_SENT, PARTNER_REVIEW, COMPLIANCE_HOLD, ACCEPTED, PROCESSING, SETTLED, RECONCILED, FAILED, RETURNED, CANCELLED]
             created_at: { type: string, format: date-time }
             intent_hash: { type: string }
-    State:
-      type: string
-      enum: [DRAFT, SUBMITTED, DENIED, APPROVAL_REQUIRED, AUTHORIZED, REJECTED, EXPIRED, QUOTING, ROUTE_SELECTED, NO_ROUTE, INSTRUCTION_SENT, PARTNER_REVIEW, COMPLIANCE_HOLD, ACCEPTED, PROCESSING, SETTLED, RECONCILED, FAILED, RETURNED, CANCELLED]
     AuthorizationDecision:
       type: object
-      required: [intent_id, decision, policy_id, policy_version, reasons]
+      required: [intent_id, decision, reasons]
       properties:
         intent_id: { type: string }
         decision: { type: string, enum: [AUTHORIZED, DENIED, APPROVAL_REQUIRED] }
-        policy_id: { type: string }
-        policy_version: { type: string }
         reasons:
           type: array
           items: { type: string }
         required_approvals: { type: integer, minimum: 0 }
-    ApprovalDecision:
-      type: object
-      required: [approver_identity_id, decision, intent_hash, expires_at]
-      properties:
-        approver_identity_id: { type: string }
-        decision: { type: string, enum: [APPROVE, REJECT] }
-        intent_hash: { type: string }
-        reason: { type: string }
-        expires_at: { type: string, format: date-time }
-        signature: { type: string }
-    ApprovalRecord:
-      allOf:
-        - $ref: '#/components/schemas/ApprovalDecision'
-        - type: object
-          required: [approval_id, recorded_at]
-          properties:
-            approval_id: { type: string }
-            recorded_at: { type: string, format: date-time }
     RouteQuote:
       type: object
-      required: [route_quote_id, partner_id, rail, source, destination, fees, expires_at]
+      required: [route_quote_id, partner_id, rail, credential_id, source, destination, fees, expires_at]
       properties:
         route_quote_id: { type: string }
         partner_id: { type: string }
-        rail: { type: string }
+        rail: { $ref: '#/components/schemas/Rail' }
+        credential_id: { type: string }
         source: { $ref: '#/components/schemas/Money' }
         destination: { $ref: '#/components/schemas/Money' }
         fees:
@@ -261,58 +325,53 @@ components:
       properties:
         instruction_id: { type: string }
         intent_id: { type: string }
+        status: { type: string, enum: [ACCEPTED, COMPLIANCE_HOLD, REJECTED, PROCESSING, SETTLED, FAILED, RETURNED] }
         partner_reference: { type: string }
-        status: { $ref: '#/components/schemas/State' }
         updated_at: { type: string, format: date-time }
-    TreasuryReceipt:
+    UniversalPaymentReceipt:
       type: object
-      required: [receipt_id, intent_id, intent_hash, organization_id, policy_version, final_status, issued_at, key_id, signature]
+      required: [payload, signature]
       properties:
-        receipt_id: { type: string }
-        intent_id: { type: string }
-        intent_hash: { type: string }
-        organization_id: { type: string }
-        policy_version: { type: string }
-        approvals: { type: array, items: { type: string } }
-        route_quote_id: { type: string }
-        partner_id: { type: string }
-        partner_reference: { type: string }
-        final_status: { $ref: '#/components/schemas/State' }
-        issued_at: { type: string, format: date-time }
-        key_id: { type: string }
+        payload:
+          type: object
+          required: [protocol_version, receipt_id, intent_id, intent_hash, financial_profile_id, agent_id, authority_id, credential_id, rail, partner_id, partner_reference, money, final_status, issued_at, key_id]
+          properties:
+            protocol_version: { const: '0.2' }
+            receipt_id: { type: string }
+            intent_id: { type: string }
+            intent_hash: { type: string }
+            financial_profile_id: { type: string }
+            agent_id: { type: string }
+            authority_id: { type: string }
+            credential_id: { type: string }
+            rail: { $ref: '#/components/schemas/Rail' }
+            partner_id: { type: string }
+            partner_reference: { type: string }
+            money: { $ref: '#/components/schemas/Money' }
+            final_status: { type: string, enum: [SETTLED, RECONCILED, FAILED, RETURNED, CANCELLED] }
+            issued_at: { type: string, format: date-time }
+            key_id: { type: string }
         signature: { type: string }
     PartnerCapability:
       type: object
-      required: [partner_id, legal_entity, jurisdictions, currencies, rails, status, manifest_version, signature]
+      required: [partner_id, rails, status]
       properties:
         partner_id: { type: string }
-        legal_entity: { type: string }
-        license_references: { type: array, items: { type: string } }
-        jurisdictions: { type: array, items: { type: string, minLength: 2, maxLength: 2 } }
-        source_countries: { type: array, items: { type: string } }
-        destination_countries: { type: array, items: { type: string } }
-        currencies: { type: array, items: { type: string } }
-        rails: { type: array, items: { type: string } }
-        status: { type: string, enum: [active, suspended, retired] }
-        manifest_version: { type: string }
-        signature: { type: string }
-    PartnerEvent:
-      type: object
-      required: [event_id, event_type, aggregate_id, sequence, occurred_at, producer, data]
-      properties:
-        event_id: { type: string }
-        event_type: { type: string }
-        aggregate_id: { type: string }
-        sequence: { type: integer, minimum: 1 }
-        occurred_at: { type: string, format: date-time }
-        producer: { type: string }
-        data: { type: object, additionalProperties: true }
+        rails:
+          type: array
+          items: { $ref: '#/components/schemas/Rail' }
+        jurisdictions:
+          type: array
+          items: { type: string }
+        currencies_or_assets:
+          type: array
+          items: { type: string }
+        status: { type: string, enum: [specified, sandbox, partner_pending, limited, production] }
     Error:
       type: object
-      required: [code, message, retryable, correlation_id]
+      required: [code, message, correlation_id]
       properties:
         code: { type: string }
         message: { type: string }
         retryable: { type: boolean }
         correlation_id: { type: string }
-        remediation_category: { type: string }
