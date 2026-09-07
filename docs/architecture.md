@@ -70,36 +70,58 @@ Signed receipts bind intent, identity, authority, selected rail, provider refere
 
 ## 3. End-to-end trust boundaries
 
+Text fallback:
+
+```text
+Sponsor / Customer
+  → KYC/KYB or KYB/UBO onboarding with an eligible provider where required
+  → AIFP-3 Agent Passport
+  → x405 Agent Financial Profile
+  → Delegated Authority + Credential Registry
+  → Universal Payment Intent
+  → Policy Engine
+  → Universal Payment Router
+      ↳ x402
+      ↳ Card / Issuer / Processor
+      ↳ Bank / ACH / SEPA / SWIFT
+      ↳ Stablecoin Provider
+      ↳ Crypto Wallet
+      ↳ Local Payment Rail
+  → Universal Payment Receipt
+```
+
+Interactive diagram:
+
 ```mermaid
 flowchart TB
-  subgraph SponsorDomain[Sponsor / Customer Trust Domain]
-    Sponsor[Human / Company / Agent Platform]
-    Agent[AI Agent]
-    Keys[Sponsor / Agent Keys]
+  subgraph SponsorDomain["Sponsor / Customer Trust Domain"]
+    Sponsor["Human / Company / Agent Platform"]
+    Agent["AI Agent"]
+    Keys["Sponsor / Agent Keys"]
   end
 
-  subgraph IdentityDomain[Identity Domain]
-    KYC[KYC / KYB Provider]
-    Passport[AIFP-3 Agent Passport]
+  subgraph IdentityDomain["Identity Domain"]
+    KYC["KYC / KYB Provider"]
+    Passport["AIFP-3 Agent Passport"]
   end
 
-  subgraph X405[x405 / AIFP-4 Protocol Domain]
-    Profile[Agent Financial Profile]
-    Authority[Delegated Authority]
-    Credential[Credential Registry]
-    Policy[Policy Engine]
-    Intent[Universal Payment Intent]
-    Router[Universal Payment Router]
-    Receipt[Receipt Authority]
+  subgraph X405Domain["x405 / AIFP-4 Protocol Domain"]
+    Profile["Agent Financial Profile"]
+    Authority["Delegated Authority"]
+    Credential["Credential Registry"]
+    Policy["Policy Engine"]
+    Intent["Universal Payment Intent"]
+    Router["Universal Payment Router"]
+    Receipt["Receipt Authority"]
   end
 
-  subgraph Execution[Execution Domains]
-    X402[x402]
-    Card[Card / Issuer / Processor]
-    Bank[Bank / ACH / SEPA / SWIFT]
-    Stable[Stablecoin Provider]
-    Wallet[Crypto Wallet]
-    Local[Local Payment Rail]
+  subgraph ExecutionDomain["Execution Domains"]
+    X402["x402"]
+    Card["Card / Issuer / Processor"]
+    Bank["Bank / ACH / SEPA / SWIFT"]
+    Stable["Stablecoin Provider"]
+    Wallet["Crypto Wallet"]
+    Local["Local Payment Rail"]
   end
 
   Sponsor --> KYC

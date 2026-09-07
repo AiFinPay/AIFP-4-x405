@@ -138,20 +138,40 @@ Agents SHOULD NOT receive raw PAN/CVV, banking passwords, private KYC files, or 
 
 ## Universal routing
 
+Text fallback (always readable):
+
+```text
+Verified Sponsor
+  → AIFP-3 Agent Passport
+  → x405 Financial Profile
+  → Delegated Authority and Policy
+  → Universal Payment Intent
+  → x405 Payment Router
+      ↳ x402 / HTTP payment
+      ↳ Card network
+      ↳ Bank / ACH / SEPA / SWIFT
+      ↳ Stablecoin
+      ↳ Crypto wallet
+      ↳ Local payment rail
+  → Universal Payment Receipt
+```
+
+Interactive diagram:
+
 ```mermaid
 flowchart LR
-  Sponsor[Verified Sponsor] --> Passport[AIFP-3 Agent Passport]
-  Passport --> Profile[x405 Financial Profile]
-  Profile --> Authority[Delegated Authority & Policy]
-  Authority --> Intent[Universal Payment Intent]
-  Intent --> Router[x405 Payment Router]
-  Router --> X402[x402 / HTTP Payment]
-  Router --> Card[Card Network]
-  Router --> Bank[Bank / ACH / SEPA / SWIFT]
-  Router --> Stable[Stablecoin]
-  Router --> Crypto[Crypto Wallet]
-  Router --> Local[Local Payment Rail]
-  X402 --> Receipt[Universal Payment Receipt]
+  Sponsor["Verified Sponsor"] --> Passport["AIFP-3 Agent Passport"]
+  Passport --> Profile["x405 Financial Profile"]
+  Profile --> Authority["Delegated Authority and Policy"]
+  Authority --> Intent["Universal Payment Intent"]
+  Intent --> Router["x405 Payment Router"]
+  Router --> X402["x402 / HTTP Payment"]
+  Router --> Card["Card Network"]
+  Router --> Bank["Bank / ACH / SEPA / SWIFT"]
+  Router --> Stable["Stablecoin"]
+  Router --> Crypto["Crypto Wallet"]
+  Router --> Local["Local Payment Rail"]
+  X402 --> Receipt["Universal Payment Receipt"]
   Card --> Receipt
   Bank --> Receipt
   Stable --> Receipt
@@ -182,12 +202,14 @@ Route selection can consider:
 |---|---|
 | Agent financial profile and protocol messages | Regulated onboarding where required |
 | AIFP-3 identity binding | KYC/KYB and beneficial-owner verification where applicable |
-| Delegated authority and policy | AML, sanctions, transaction monitoring and reporting as assigned |
+| Delegated authority and policy | AML, sanctions, transaction monitoring and reporting as assigned by applicable law and definitive agreement |
 | Universal payment intent | Card issuance, account issuance, money transmission or safeguarding where licensed |
 | Credential references and routing | Actual regulated execution |
 | Signed receipts and reconciliation | Chargebacks, returns, disputes and regulated complaints where applicable |
 
-AiFinPay does not become a bank, card issuer, custodian, money transmitter, or payment institution merely by defining or operating x405 software infrastructure.
+AiFinPay does not become a bank, card issuer, custodian, money transmitter, or payment institution merely by defining or operating x405 software infrastructure. Regulatory classification depends on the actual activities performed, jurisdiction, contracts, and applicable law.
+
+See the vendor-neutral [`Compliance/`](Compliance/) framework. It is designed so any eligible licensed provider can integrate with x405 without being named in the core standard.
 
 ---
 
@@ -248,6 +270,7 @@ Conformance requires published test vectors, deterministic state transitions, re
 | Core normative specification | [`docs/aifp4/01-core-specification.md`](docs/aifp4/01-core-specification.md) |
 | Architecture | [`docs/architecture.md`](docs/architecture.md) |
 | Onboarding & delegation | [`docs/onboarding-and-delegation.md`](docs/onboarding-and-delegation.md) |
+| **Global compliance framework** | [`Compliance/README.md`](Compliance/README.md) |
 | Compliance boundaries | [`docs/compliance-boundaries.md`](docs/compliance-boundaries.md) |
 | Security model | [`docs/security-model.md`](docs/security-model.md) |
 | OpenAPI 3.1 draft | [`openapi/aifp-4.openapi.yaml`](openapi/aifp-4.openapi.yaml) |
