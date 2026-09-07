@@ -1,47 +1,146 @@
-AIFP-4 LAYERED LICENSING NOTICE
-Copyright (c) 2026 AiFinPay. All rights reserved except as expressly licensed.
+AIFP-4 / x405 PROTOCOL AND REFERENCE IMPLEMENTATION LICENSE v1.0
 
-This repository uses separate licenses for separate material. No license grants rights to AiFinPay names, logos, certification marks, partner network access, production services, confidential information, customer data, or commercial managed-network operation.
+Copyright (c) 2026 AiFinPay. All rights reserved except as expressly granted below.
 
-1. OPEN PROTOCOL SPECIFICATION
+IMPORTANT: x405 and AIFP-4 were created and are maintained by AiFinPay. By copying, forking, installing, executing, implementing, modifying, distributing, or otherwise using material from this repository, you agree to the terms applicable to that material. If you do not agree, do not exercise rights beyond those automatically provided by applicable law or by GitHub solely for use of its Service.
 
-Files under docs/, schemas/, openapi/, examples/ protocol prose, public message definitions, and public interoperability diagrams are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0), unless a file states otherwise.
+1. DEFINITIONS
 
-You may implement the public specification, including commercially, subject to attribution and the separate trademark, certification, patent, regulatory, and partner-network rules in this repository. Implementing the specification does not make an implementation "AiFinPay certified" and does not grant access to the AIFP Global Settlement Network.
+"AiFinPay" means the owner and maintainer of the AIFP protocol family and the x405 specification.
 
-2. REFERENCE SOURCE CODE
+"Specification" means the public normative and explanatory protocol materials in docs/, schemas/, openapi/, protocol diagrams, public message definitions, test vectors expressly designated as specification material, and equivalent public protocol documentation.
 
-Files under src/, tests/, SDK or reference-implementation directories, package configuration, CI, scripts, and future executable reference code are licensed under the PolyForm Noncommercial License 1.0.0, unless a file states otherwise.
+"Reference Code" means executable or buildable source code, tests, SDK/reference implementation code, scripts, CI/configuration and related implementation material, including src/ and tests/, unless a file states otherwise.
 
-Noncommercial research, evaluation, education, security review, interoperability testing, and internal proof-of-concept use are permitted under that license. Commercial production use, commercial hosted services, resale, white-label use, competing payment or treasury services, and use to provide services to third parties require a separate written commercial license from AiFinPay.
+"Marks" means AiFinPay, AIFP, AIFP-4, x405, related logos, protocol badges, certification marks and confusingly similar identifiers.
 
-Official license text:
+"Implementation" means software that independently implements the Specification.
+
+2. OWNERSHIP AND ORIGIN
+
+AiFinPay retains all copyright and other intellectual-property rights that it owns in the Specification, Reference Code, documentation, diagrams, schemas, test vectors, branding and other original repository material.
+
+The canonical origin notice is:
+
+  "x405 / AIFP-4 — Universal Payment Protocol for AI Agents, created by AiFinPay."
+
+Nothing in this License transfers ownership of AiFinPay intellectual property to a user, contributor, fork maintainer, integrator, implementer or distributor.
+
+Copyright protects the original expression and software contained in this repository. This License does not claim exclusive ownership over facts, ideas, methods or other subject matter that applicable law does not protect by copyright. Patent and trademark rights are addressed separately below and in PATENTS.md and TRADEMARKS.md.
+
+3. PUBLIC SPECIFICATION IMPLEMENTATION GRANT
+
+Subject to this License, AiFinPay grants you a worldwide, non-exclusive, revocable-on-breach license to:
+
+(a) read and evaluate the Specification;
+(b) implement the Specification in your own software, including for commercial use;
+(c) reproduce reasonable portions of the Specification when technically necessary for interoperability, documentation, testing or implementation; and
+(d) create interoperability adapters and integrations.
+
+This grant is intended to allow banks, PSPs, issuers, fintechs, merchants, agent platforms, developers and other parties to implement x405 as an interoperable protocol while preserving clear attribution and protocol identity.
+
+4. MANDATORY ATTRIBUTION
+
+Any public Implementation, distribution, fork, derivative documentation, hosted service documentation, SDK or product that is materially based on the Specification must retain a clear notice substantially equivalent to:
+
+  "Implements or is based on x405 / AIFP-4, a payment protocol for AI agents created by AiFinPay."
+
+Where technically practicable, include a link to the canonical repository:
+https://github.com/AiFinPay/AIFP-4-x405
+
+You must retain existing copyright, license, patent, trademark and NOTICE files in copies or forks of repository material.
+
+5. NO PROTOCOL CLONING OR MISATTRIBUTION
+
+Except to the extent applicable law permits otherwise, you may not:
+
+(a) copy or substantially reproduce the Specification and present that copied material as a protocol or standard originally created by you or another party;
+(b) remove, conceal or materially misstate AiFinPay authorship or origin notices;
+(c) rename a substantially copied or lightly modified x405/AIFP-4 specification and claim that the resulting protocol was independently originated by you;
+(d) represent a modified fork as the official x405 or official AIFP-4 specification;
+(e) use the Marks in a manner that implies ownership, sponsorship, certification, endorsement or official status that AiFinPay has not granted in writing.
+
+Nothing here prevents independently created technology, lawful interoperability, clean-room implementations, or use of unprotectable ideas. The restriction applies to copying, misattribution, protected expression, Marks, Reference Code and other rights actually owned by AiFinPay.
+
+6. FORKS AND MODIFIED SPECIFICATIONS
+
+GitHub's Terms may permit users to create forks of a public repository within GitHub's Service. Such a platform fork does not grant additional rights beyond GitHub's Terms and this License.
+
+A fork or modified specification that is distributed or presented publicly must:
+
+(a) retain all required notices;
+(b) state prominently that it is an independent fork or derivative and is not the canonical AiFinPay specification;
+(c) describe material modifications;
+(d) not use "x405", "AIFP-4" or another AiFinPay Mark as the primary product/protocol name except for accurate nominative references such as "based on x405" or "implements x405"; and
+(e) not claim AiFinPay certification unless separately granted in writing.
+
+7. REFERENCE CODE LICENSE
+
+Unless a file states otherwise, Reference Code is licensed under the PolyForm Noncommercial License 1.0.0, incorporated by reference:
 https://polyformproject.org/licenses/noncommercial/1.0.0
 
-Required Notice: Copyright 2026 AiFinPay. AIFP-4 reference source is licensed for noncommercial use only unless AiFinPay grants a separate written commercial license.
+Permitted noncommercial uses include research, evaluation, education, security review, interoperability testing and internal proof-of-concept work within that license.
 
-3. COMMERCIAL AND NETWORK LICENSE
+Commercial production use of substantial Reference Code, hosted commercial services using substantial Reference Code, resale, white-labeling, sublicensing, or embedding substantial Reference Code into a commercial product requires a separate written commercial license from AiFinPay.
 
-Commercial deployment rights, enterprise modules, production partner adapters, managed routing, certification, conformance marks, service-level commitments, and access to contracted licensed settlement partners are available only under a separate written agreement with AiFinPay.
+Independent commercial implementations of the public Specification that do not copy Reference Code beyond applicable rights remain permitted under Section 3.
 
-4. TRADEMARKS AND CERTIFICATION
+8. INSTALLATION AND USE ACKNOWLEDGEMENT
 
-See TRADEMARKS.md. No permission is granted to use AiFinPay, AIFP, AIFP-4, AiFinPay Agent Financial Network, AIFP Global Settlement Network, related logos, or confusingly similar marks as the name of a product, protocol, company, service, token, network, certification, or domain.
+Installing, running, importing, integrating or deploying Reference Code does not transfer ownership. It means you are using AiFinPay-originated software under the applicable license. You may describe your product as implementing or integrating x405, but you may not describe AiFinPay's Reference Code or Specification as your proprietary original protocol.
 
-5. PATENTS
+9. TRADEMARKS, NAMING AND CERTIFICATION
 
-See PATENTS.md. Publication of this repository does not dedicate inventions to the public domain. Patent rights are granted only where an applicable license expressly grants them. Commercial implementers should obtain a written patent and commercial license from AiFinPay where required.
+No trademark license is granted except limited nominative use necessary to truthfully identify compatibility or origin.
 
-6. CONTRIBUTIONS
+Subject to TRADEMARKS.md, factual statements such as the following are generally permitted:
 
-Unless accepted under a separate contributor agreement, contributions are submitted under the license applicable to the contributed file and include the rights reasonably required for AiFinPay to operate, license, defend, and commercialize AIFP-4. Maintainers may require a Contributor License Agreement before accepting material contributions.
+- "implements x405";
+- "compatible with x405 / AIFP-4";
+- "based on the x405 specification created by AiFinPay".
 
-7. NO REGULATORY PERMISSION
+Written permission is required for product, company, token, protocol, network, repository, domain or certification branding that uses an AiFinPay Mark in a manner likely to imply official status, ownership or sponsorship.
 
-No license grants permission to provide regulated payment, banking, custody, exchange, money transmission, virtual-asset, e-money, acquiring, issuing, or settlement services. Every deployer is responsible for obtaining appropriate legal advice, licenses, registrations, approvals, and regulated partners.
+Only AiFinPay or an entity expressly authorized by AiFinPay may issue official x405/AIFP-4 certification or conformance marks.
 
-8. WARRANTY
+10. COMMERCIAL SERVICES AND NETWORK ACCESS
 
-To the maximum extent permitted by law, materials are provided "AS IS", without warranties or conditions of any kind. AiFinPay is not liable for losses arising from implementation, integration, security failures, regulatory violations, or movement of funds.
+This License does not grant access to any AiFinPay managed service, private adapter, licensed-provider relationship, production network, certification program, SLA, confidential material or commercial support.
 
-This notice is a repository licensing structure, not a substitute for jurisdiction-specific legal advice. AiFinPay should have qualified intellectual-property and financial-regulatory counsel review it before commercial launch.
+Those rights require a separate written agreement where applicable. See COMMERCIAL-LICENSE.md.
+
+11. PATENTS
+
+Publication does not dedicate inventions to the public domain or waive patent rights. No patent license is granted except where expressly stated in a separate written license or patent notice. See PATENTS.md.
+
+12. CONTRIBUTIONS
+
+Unless governed by a separate Contributor License Agreement, a contribution to a repository file is offered under the license applicable to that file, and the contributor represents that they have authority to make the contribution under those terms.
+
+13. REGULATORY LIMITATION
+
+This License grants intellectual-property permissions only. It does not authorize banking, card issuing, money transmission, safeguarding, custody, acquiring, payment services, exchange, virtual-asset services or any other regulated financial activity. Implementers are responsible for applicable law, licensing, registration, network rules and regulated partners.
+
+14. TERMINATION
+
+Rights granted by this License terminate automatically upon material breach. For a first, non-willful breach capable of cure, rights are reinstated if the breach is fully cured within 30 days after the user becomes aware of it, unless AiFinPay has already commenced enforcement based on fraud, deliberate misattribution, security abuse or knowing infringement.
+
+Termination does not limit AiFinPay's remedies for infringement, trademark misuse, breach, unauthorized commercial use or other unlawful conduct.
+
+15. NO WARRANTY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE MATERIALS ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, SECURITY, AVAILABILITY OR REGULATORY SUITABILITY.
+
+16. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, AIFINPAY AND ITS CONTRIBUTORS WILL NOT BE LIABLE UNDER THIS LICENSE FOR INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR FOR LOST PROFITS, REVENUE, DATA, GOODWILL OR BUSINESS INTERRUPTION, ARISING FROM USE OR IMPLEMENTATION OF THE MATERIALS.
+
+Nothing in this License excludes liability or rights that applicable law does not permit to be excluded.
+
+17. RESERVATION OF RIGHTS
+
+All rights not expressly granted are reserved by AiFinPay and the applicable copyright owners.
+
+18. LEGAL REVIEW NOTICE
+
+This is AiFinPay's repository licensing framework and is not jurisdiction-specific legal advice. Before relying on it for commercial enforcement, certification, trademark registration, patent strategy or a production financial deployment, AiFinPay should have qualified intellectual-property and financial-regulatory counsel review the final terms.
